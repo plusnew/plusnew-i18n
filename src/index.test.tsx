@@ -9,8 +9,8 @@ function nextTick() {
   return new Promise((resolve) => resolve());
 }
 
-describe("test dragFactory", () => {
-  it("dragState is shown correctly", async () => {
+describe("test i18nFactory", () => {
+  it("caching from namespaces", async () => {
     const translations = {
       cd: jest.fn((language: string) =>
         Promise.resolve({
