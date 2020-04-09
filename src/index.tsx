@@ -5,7 +5,7 @@ import plusnew, {
   store,
   context,
 } from "@plusnew/core";
-import { PromiseType, mapObject } from "util/functional";
+import { PromiseType, mapObject } from "./util/functional";
 
 type settingsTemplate = {
   translations: {
@@ -25,7 +25,7 @@ type providerProps = {
 };
 
 type consumerProps<T extends settingsTemplate> = {
-  children: (settings: resolvedLanguage<T>) => {};
+  children: (settings: resolvedLanguage<T>) => ApplicationElement;
 };
 
 type languageCache<T extends settingsTemplate> = {
