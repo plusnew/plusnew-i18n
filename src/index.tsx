@@ -172,9 +172,7 @@ export default function factory<T extends settingsTemplate>(settings: T) {
                     );
                   }
 
-                  if (cachedLanguage.error === false) {
-                    return cachedLanguage.data;
-                  }
+                  return cachedLanguage.data;
                 }
                 loadNamespace({ language, namespace: namespaceName as string });
 
