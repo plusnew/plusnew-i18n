@@ -48,15 +48,18 @@ type languageCachedEntity<T> =
 
 export default function factory<T extends settingsTemplate>(settings: T) {
   const i18n = context<
-    { cachedLanguages: languageCache<T>; currentLanguage: string },
+    {
+      cachedLanguages: languageCache<T>;
+      currentLanguage: string;
+    },
     { language: string; namespace: string }
   >();
-
-  const loadingNamespaces: { namespace: string; language: string }[] = [];
 
   return {
     Provider: class Provider extends Component<providerProps> {
       render(Props: Props<providerProps>) {
+        const loadingNamespaces: { namespace: string; language: string }[] = [];
+
         const cachedLanguages = store<
           languageCache<T>,
           | {

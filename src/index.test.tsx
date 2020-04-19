@@ -180,4 +180,52 @@ describe("test i18nFactory", () => {
       expect(translations.cd).toHaveBeenCalledTimes(2);
     });
   });
+
+  describe("parralell", () => {
+    it("seperate providers should load at the same time", async () => {
+      const translations = {
+        cd: jest.fn(
+          (_language: string): Promise<{ foo: { bar: string } }> =>
+            Promise.resolve({
+              foo: {
+                bar: "baz",
+              },
+            })
+        ),
+      };
+
+      const i18n = i18nFactory({
+        fallbackLanguage: "en",
+        translations,
+      });
+
+      const MainComponent = component("MainComponent", () => (
+        <>
+          <i18n.Provider language="en">
+            <i18n.Consumer>
+              {({ cd }) => <div>{cd()?.foo.bar ?? "loading"}</div>}
+            </i18n.Consumer>
+          </i18n.Provider>
+
+          <i18n.Provider language="en">
+            <i18n.Consumer>
+              {({ cd }) => <span>{cd()?.foo.bar ?? "loading"}</span>}
+            </i18n.Consumer>
+          </i18n.Provider>
+        </>
+      ));
+
+      const wrapper = mount(<MainComponent />);
+
+      expect(wrapper.contains(<div>loading</div>)).toBe(true);
+      expect(wrapper.contains(<span>loading</span>)).toBe(true);
+      // expect(translations.cd).toHaveBeenCalledTimes(2);
+
+      await nextTick();
+
+      expect(wrapper.contains(<div>baz</div>)).toBe(true);
+      expect(wrapper.contains(<span>baz</span>)).toBe(true);
+      expect(translations.cd).toHaveBeenCalledTimes(2);
+    });
+  });
 });
