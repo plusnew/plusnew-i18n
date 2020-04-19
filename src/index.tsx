@@ -92,7 +92,7 @@ export default function factory<T extends settingsTemplate>(settings: T) {
           };
         });
 
-        function loadNamespace({
+        async function loadNamespace({
           language,
           namespace,
         }: {
@@ -108,26 +108,31 @@ export default function factory<T extends settingsTemplate>(settings: T) {
           ) {
             loadingNamespaces.push({ namespace, language: language });
 
-            const languagePromise = settings.translations[namespace](language);
+            let data: any;
+            let errored = false;
+            try {
+              data = await settings.translations[namespace](language);
+            } catch (_error) {
+              errored = true;
+            }
 
-            languagePromise.catch(() => {
+            if (errored) {
               cachedLanguages.dispatch({
                 type: "LANGUAGE_ERROR",
                 language: language,
                 namespace,
               });
-            });
-
-            languagePromise.then((data) => {
+            } else {
               cachedLanguages.dispatch({
                 type: "LANGUAGE_RESULT",
                 data,
                 language,
                 namespace,
               });
-            });
+            }
           }
         }
+
         return (
           <cachedLanguages.Observer>
             {(cachedLanguagesState) => (
