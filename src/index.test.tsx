@@ -12,7 +12,7 @@ function nextTick() {
 describe("test i18nFactory", () => {
   it("caching from namespaces", async () => {
     const translations = {
-      cd: jest.fn((language: string) =>
+      base: jest.fn((language: string) =>
         Promise.resolve({
           foo: {
             bar: `bar-${language}`,
@@ -33,10 +33,10 @@ describe("test i18nFactory", () => {
         {(languageState) => (
           <i18n.Provider language={languageState}>
             <i18n.Consumer>
-              {({ cd }) => <span>{cd()?.foo.bar ?? "loading"}</span>}
+              {({ base }) => <span>{base()?.foo.bar ?? "loading"}</span>}
             </i18n.Consumer>
             <i18n.Consumer>
-              {({ cd }) => <div>{cd()?.foo.baz ?? "loading"}</div>}
+              {({ base }) => <div>{base()?.foo.baz ?? "loading"}</div>}
             </i18n.Consumer>
           </i18n.Provider>
         )}
@@ -45,44 +45,44 @@ describe("test i18nFactory", () => {
 
     const wrapper = mount(<MainComponent />);
 
-    // When initially cd() is called, the function should return null and call the settings.cd(de)
+    // When initially base() is called, the function should return null and call the settings.base(de)
     expect(wrapper.contains(<span>loading</span>)).toBe(true);
     expect(wrapper.contains(<div>loading</div>)).toBe(true);
-    expect(translations.cd).toHaveBeenCalledTimes(1);
+    expect(translations.base).toHaveBeenCalledTimes(1);
 
     await nextTick();
 
     // When the promise is resolved, the component should be updated
     expect(wrapper.contains(<span>bar-de</span>)).toBe(true);
     expect(wrapper.contains(<div>baz-de</div>)).toBe(true);
-    expect(translations.cd).toHaveBeenCalledTimes(1);
+    expect(translations.base).toHaveBeenCalledTimes(1);
 
     language.dispatch("en");
 
-    // When language got changed, the function should return null and call the settings.cd(en)
+    // When language got changed, the function should return null and call the settings.base(en)
     expect(wrapper.contains(<span>loading</span>)).toBe(true);
     expect(wrapper.contains(<div>loading</div>)).toBe(true);
-    expect(translations.cd).toHaveBeenCalledTimes(2);
+    expect(translations.base).toHaveBeenCalledTimes(2);
 
     await nextTick();
 
     // When the promise is resolved, the component should be updated
     expect(wrapper.contains(<span>bar-en</span>)).toBe(true);
     expect(wrapper.contains(<div>baz-en</div>)).toBe(true);
-    expect(translations.cd).toHaveBeenCalledTimes(2);
+    expect(translations.base).toHaveBeenCalledTimes(2);
 
     language.dispatch("de");
 
     // When switched back to de, everything should be visible instantly without any new loading
     expect(wrapper.contains(<span>bar-de</span>)).toBe(true);
     expect(wrapper.contains(<div>baz-de</div>)).toBe(true);
-    expect(translations.cd).toHaveBeenCalledTimes(2);
+    expect(translations.base).toHaveBeenCalledTimes(2);
   });
 
   describe("fallback language", () => {
     it("successful fallback", async () => {
       const translations = {
-        cd: jest.fn((language: string) =>
+        base: jest.fn((language: string) =>
           language === "en"
             ? Promise.resolve({
                 foo: {
@@ -104,7 +104,7 @@ describe("test i18nFactory", () => {
           {(languageState) => (
             <i18n.Provider language={languageState}>
               <i18n.Consumer>
-                {({ cd }) => <span>{cd()?.foo.bar ?? "loading"}</span>}
+                {({ base }) => <span>{base()?.foo.bar ?? "loading"}</span>}
               </i18n.Consumer>
             </i18n.Provider>
           )}
@@ -113,29 +113,29 @@ describe("test i18nFactory", () => {
 
       const wrapper = mount(<MainComponent />);
 
-      // When initially cd() is called, the function should return null and call the settings.cd(de)
+      // When initially base() is called, the function should return null and call the settings.base(de)
       expect(wrapper.contains(<span>loading</span>)).toBe(true);
-      expect(translations.cd).toHaveBeenCalledTimes(1);
+      expect(translations.base).toHaveBeenCalledTimes(1);
 
       await nextTick();
 
       expect(wrapper.contains(<span>loading</span>)).toBe(true);
-      expect(translations.cd).toHaveBeenCalledTimes(2);
+      expect(translations.base).toHaveBeenCalledTimes(2);
 
       await nextTick();
 
       expect(wrapper.contains(<span>bar-en</span>)).toBe(true);
-      expect(translations.cd).toHaveBeenCalledTimes(2);
+      expect(translations.base).toHaveBeenCalledTimes(2);
 
       language.dispatch("en");
 
       expect(wrapper.contains(<span>bar-en</span>)).toBe(true);
-      expect(translations.cd).toHaveBeenCalledTimes(2);
+      expect(translations.base).toHaveBeenCalledTimes(2);
     });
 
     it("failing fallback", async () => {
       const translations = {
-        cd: jest.fn(
+        base: jest.fn(
           (_language: string): Promise<{ foo: { bar: string } }> =>
             Promise.reject()
         ),
@@ -154,7 +154,7 @@ describe("test i18nFactory", () => {
               <Try catch={() => <div>error</div>}>
                 {() => (
                   <i18n.Consumer>
-                    {({ cd }) => <span>{cd()?.foo.bar ?? "loading"}</span>}
+                    {({ base }) => <span>{base()?.foo.bar ?? "loading"}</span>}
                   </i18n.Consumer>
                 )}
               </Try>
@@ -165,26 +165,26 @@ describe("test i18nFactory", () => {
 
       const wrapper = mount(<MainComponent />);
 
-      // When initially cd() is called, the function should return null and call the settings.cd(de)
+      // When initially base() is called, the function should return null and call the settings.base(de)
       expect(wrapper.contains(<span>loading</span>)).toBe(true);
-      expect(translations.cd).toHaveBeenCalledTimes(1);
+      expect(translations.base).toHaveBeenCalledTimes(1);
 
       await nextTick();
 
       expect(wrapper.contains(<span>loading</span>)).toBe(true);
-      expect(translations.cd).toHaveBeenCalledTimes(2);
+      expect(translations.base).toHaveBeenCalledTimes(2);
 
       await nextTick();
 
       expect(wrapper.contains(<div>error</div>)).toBe(true);
-      expect(translations.cd).toHaveBeenCalledTimes(2);
+      expect(translations.base).toHaveBeenCalledTimes(2);
     });
   });
 
   describe("parralell", () => {
     it("seperate providers should load at the same time", async () => {
       const translations = {
-        cd: jest.fn(
+        base: jest.fn(
           (_language: string): Promise<{ foo: { bar: string } }> =>
             Promise.resolve({
               foo: {
@@ -203,13 +203,13 @@ describe("test i18nFactory", () => {
         <>
           <i18n.Provider language="en">
             <i18n.Consumer>
-              {({ cd }) => <div>{cd()?.foo.bar ?? "loading"}</div>}
+              {({ base }) => <div>{base()?.foo.bar ?? "loading"}</div>}
             </i18n.Consumer>
           </i18n.Provider>
 
           <i18n.Provider language="en">
             <i18n.Consumer>
-              {({ cd }) => <span>{cd()?.foo.bar ?? "loading"}</span>}
+              {({ base }) => <span>{base()?.foo.bar ?? "loading"}</span>}
             </i18n.Consumer>
           </i18n.Provider>
         </>
@@ -219,13 +219,13 @@ describe("test i18nFactory", () => {
 
       expect(wrapper.contains(<div>loading</div>)).toBe(true);
       expect(wrapper.contains(<span>loading</span>)).toBe(true);
-      // expect(translations.cd).toHaveBeenCalledTimes(2);
+      // expect(translations.base).toHaveBeenCalledTimes(2);
 
       await nextTick();
 
       expect(wrapper.contains(<div>baz</div>)).toBe(true);
       expect(wrapper.contains(<span>baz</span>)).toBe(true);
-      expect(translations.cd).toHaveBeenCalledTimes(2);
+      expect(translations.base).toHaveBeenCalledTimes(2);
     });
   });
 });
