@@ -57,6 +57,7 @@ export default function factory<T extends settingsTemplate>(settings: T) {
 
   return {
     Provider: class Provider extends Component<providerProps> {
+      static displayName = "I18nProvider";
       render(Props: Props<providerProps>) {
         const loadingNamespaces: { namespace: string; language: string }[] = [];
 
@@ -149,6 +150,7 @@ export default function factory<T extends settingsTemplate>(settings: T) {
       }
     },
     Consumer: class Consumer extends Component<consumerProps<T>> {
+      static displayName = "I18nConsumer";
       render(Props: Props<consumerProps<T>>) {
         return (
           <i18n.Consumer>
