@@ -1,7 +1,7 @@
 {
 	"name": "@plusnew/i18n",
 	"version": "0.2.0",
-	"description": "library for doing drag and drop dom-less with plusnew",
+	"description": "library for doing localization with plusnew",
 	"main": "src/index.tsx",
 	"module": "src/index.tsx",
 	"scripts": {
@@ -14,12 +14,12 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/plusnew-dnd/plusnew.git"
+		"url": "git+https://github.com/plusnew/dnd.git"
 	},
 	"author": "Carlo Jeske",
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/plusnew-dnd/plusnew/issues"
+		"url": "https://github.com/plusnew/dnd/issues"
 	},
 	"dependencies": {},
 	"devDependencies": {
